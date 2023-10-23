@@ -1,6 +1,6 @@
 package table
 
-import "github.com/evenboee/go-tabular/generalizer"
+import "github.com/evenboee/table/generalizer"
 
 type StringifyConfig struct {
 	*stringer

@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	table "github.com/evenboee/go-tabular"
+	"github.com/evenboee/table"
 )
 
 type User struct {

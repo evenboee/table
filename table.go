@@ -1,6 +1,6 @@
 package table
 
-import "github.com/evenboee/go-tabular/generalizer"
+import "github.com/evenboee/table/generalizer"
 
 func Array[T any](data []T, opts ...StringifyConfigOpt) string {
 	str := NewStringifyConfig(DefaultStringer)

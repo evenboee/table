@@ -1,4 +1,4 @@
-module github.com/evenboee/go-tabular
+module github.com/evenboee/table
 
 go 1.21.0
 
