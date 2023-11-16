@@ -23,6 +23,23 @@ In general:
     - offset and limit (use StructLimit to print in groups with a size of the limit)
 
 
+## Basic Example
+
+```go
+type User struct {
+	ID             string    `table:"ID"`
+	Name           string    `table:"Name"`
+	Age            int       `table:"Age"`
+	HashedPassword string    `table:"-"` // ignored
+	CreatedAt      time.Time `table:"Created At"`
+}
+
+users := []User{...}
+println(table.Struct(users))
+```
+
+
 TODO:
 - [ ] Order additional columns (alphabetically?)
+- [ ] Table tag as option
 - [ ] due for a rework
