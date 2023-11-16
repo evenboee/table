@@ -38,6 +38,13 @@ users := []User{...}
 println(table.Struct(users))
 ```
 
+```
+| ID | Name  | Age | Created At                |
++----+-------+-----+---------------------------+
+| a  | Alice |  20 | 2023-11-16T23:02:38+01:00 |
+| b  | Bob   |  21 | 2023-11-16T23:02:38+01:00 |
+```
+
 
 TODO:
 - [ ] Order additional columns (alphabetically?)
