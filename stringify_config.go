@@ -83,6 +83,18 @@ func WithDecimalPrecision(precision uint16) StringifyConfigOpt {
 	}
 }
 
+func WithNilFormatter(s string) StringifyConfigOpt {
+	return func(c *StringifyConfig) {
+		c.Converter.Nil = generalizer.NilAsFormatter(s)
+	}
+}
+
+func WithBoolFormatter(t string, f string) StringifyConfigOpt {
+	return func(c *StringifyConfig) {
+		c.Converter.Bool = generalizer.BoolFormatter(t, f)
+	}
+}
+
 func WithSpreadsheetHeader(s *string) StringifyConfigOpt {
 	return func(c *StringifyConfig) {
 		c.Spreadsheet = s
