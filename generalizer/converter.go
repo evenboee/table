@@ -142,3 +142,15 @@ func StringCutoffFormatter(limit int) func(string) string {
 		return s
 	}
 }
+
+type subConverter struct {
+	f func(any) (string, bool)
+}
+
+func (c *subConverter) ToString(val any) (string, bool) {
+	return c.f(val)
+}
+
+func SubConverterFrom(f func(any) (string, bool)) SubConverter {
+	return &subConverter{f}
+}
