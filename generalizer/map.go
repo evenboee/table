@@ -1,46 +1,44 @@
 package generalizer
 
 import (
-	"fmt"
+	"errors"
+	"reflect"
+	"sort"
 )
 
-func Map[K comparable, V any](data []map[K]V, explicitOrder []K) ([]string, []map[string]string) {
-	rows := make([]map[string]string, len(data))
-	headers := make(map[string]struct{})
+func (c *Converter) Map(data any) Result {
+	keys := make(map[string]struct{})
+	rows := make([]map[string]string, 0)
 
-	for i, row := range data {
-		m := make(map[string]string)
-		for k, v := range row {
-			sK := fmt.Sprintf("%v", k)
-			sV := fmt.Sprintf("%v", v)
-			m[sK] = sV
-			headers[sK] = struct{}{}
+	v := dereference(reflect.ValueOf(data))
+	if v.Kind() != reflect.Slice && v.Elem().Kind() != reflect.Map {
+		panic(errors.New("data is not a map"))
+	}
+
+	for i := 0; i < v.Len(); i++ {
+		m := v.Index(i)
+		row := make(map[string]string)
+
+		for _, k := range m.MapKeys() {
+			key := c.ToString(k.Interface())
+			keyVal := m.MapIndex(k)
+			val := c.ToString(keyVal.Interface())
+
+			keys[key] = struct{}{}
+			row[key] = val
 		}
-		rows[i] = m
+		rows = append(rows, row)
 	}
 
-	h := make([]string, len(headers)+len(explicitOrder))
-
-	order := make(map[string]int)
-	for i, k := range explicitOrder {
-		order[fmt.Sprintf("%v", k)] = i
+	headers := make([]string, 0, len(keys))
+	for k := range keys {
+		headers = append(headers, k)
 	}
 
-	i := len(explicitOrder)
-	for k := range headers {
-		if idx, ok := order[k]; ok {
-			h[idx] = k
-			delete(order, k)
-		} else {
-			h[i] = k
-			i++
-		}
-	}
-	h = h[:i]
+	sort.Strings(headers)
 
-	for k, idx := range order {
-		h[idx] = k
+	return Result{
+		Headers: headers,
+		Rows:    rows,
 	}
-
-	return h, rows
 }

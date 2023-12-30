@@ -53,8 +53,8 @@ func main() {
 		},
 	}
 
-	users[1].Children = []User{users[0]}
+	users[1].Children = []User{users[0], users[1]}
 
-	s := table.Struct(users)
+	s := table.String(users)
 	println(s)
 }

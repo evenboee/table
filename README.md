@@ -2,7 +2,7 @@
 
 Print structs, maps and arrays as tables. Primary focus is on structs. 
 
-Inspiered by [https://ozh.github.io/ascii-tables/](https://ozh.github.io/ascii-tables/)
+Inspired by [https://ozh.github.io/ascii-tables/](https://ozh.github.io/ascii-tables/)
 
 See `_examples` for usage
 
@@ -17,10 +17,10 @@ In general:
         - margin (distance from column content + padding to sides)
         - separators (top, row and bottom)
         - more...
-    - **generalizer.StringerConfig**
+    - **generalizer.Converter**
         - defines how will the generalizer will turn values into strings
         - default uses RFC3339 time format and turns nil to empty strings
-    - offset and limit (use StructLimit to print in groups with a size of the limit)
+    - offset and limit
 
 
 ## Basic Example
@@ -35,7 +35,7 @@ type User struct {
 }
 
 users := []User{...}
-println(table.Struct(users))
+println(table.String(users))
 ```
 
 ```
@@ -48,5 +48,7 @@ println(table.Struct(users))
 
 TODO:
 - [ ] Order additional columns (alphabetically?)
-- [ ] Table tag as option
-- [ ] due for a rework
+- [ ] Table tag as option (specify other such as json, xml, yaml to use)
+- [ ] consider rework
+  - StringifyConfig is a little clunky to understand
+  - Generalizer Converter configuration when using table.String is excessively verbose

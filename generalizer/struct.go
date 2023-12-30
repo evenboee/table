@@ -14,19 +14,28 @@ type Tabular interface {
 
 var ErrTypeNotStruct = errors.New("type is not a struct")
 
-func Struct[T any](data []T, s *StringerConfig) ([]string, []map[string]string) {
-	t := dereference(reflect.TypeOf(*new(T)))
+func (c *Converter) Struct(data any) Result {
+	v := dereference(reflect.ValueOf(data))
+	t := v.Type()
 
-	if t.Kind() != reflect.Struct {
+	// make sure value if a slice of structs
+	if t.Kind() != reflect.Slice && t.Elem().Kind() != reflect.Struct {
 		panic(ErrTypeNotStruct)
 	}
+
+	t = t.Elem() // Get the type of the struct
 
 	// Intermediary map to keep track of headers and if they are numeric
 	h := make(map[string]struct{})
 
-	rows := make([]map[string]string, len(data))
-	for i, row := range data {
-		r := generalizeStruct(row, s)
+	d := make([]any, v.Len())
+	for i := 0; i < v.Len(); i++ {
+		d[i] = v.Index(i).Interface()
+	}
+
+	rows := make([]map[string]string, len(d))
+	for i, row := range d {
+		r := c.generalizeStruct(row)
 		for k := range r {
 			h[k] = struct{}{}
 		}
@@ -59,15 +68,18 @@ func Struct[T any](data []T, s *StringerConfig) ([]string, []map[string]string) 
 		headers = append(headers, k)
 	}
 
-	return headers, rows
+	return Result{
+		Headers: headers,
+		Rows:    rows,
+	}
 }
 
-func SingleStruct[T any](data T, s *StringerConfig) ([]string, []map[string]string) {
+func (c *Converter) SingleStruct(data any) Result {
 	headers := []string{"Field", "Value"}
 
 	t := dereference(reflect.TypeOf(data))
 
-	r := generalizeStruct(data, s)
+	r := c.generalizeStruct(data)
 
 	fields := make([]map[string]string, 0, len(r))
 	for i := 0; i < t.NumField(); i++ {
@@ -93,18 +105,21 @@ func SingleStruct[T any](data T, s *StringerConfig) ([]string, []map[string]stri
 		})
 	}
 
-	return headers, fields
+	return Result{
+		Headers: headers,
+		Rows:    fields,
+	}
 }
 
 // extract key value pairs of the fields of struct
-func generalizeStruct[T any](data T, s *StringerConfig) map[string]string {
-	t := dereference(reflect.TypeOf(data))
+func (c *Converter) generalizeStruct(data any) map[string]string {
 	val := dereference(reflect.ValueOf(data))
+	t := val.Type()
 
 	r := make(map[string]string)
 
 	// If the struct is a Tabular, use the ToTable method
-	if tabular, ok := any(data).(Tabular); ok {
+	if tabular, ok := data.(Tabular); ok {
 		r = tabular.ToTable()
 		if r == nil { // If ToTable returns nil, make sure it is not nil
 			r = make(map[string]string)
@@ -121,7 +136,7 @@ func generalizeStruct[T any](data T, s *StringerConfig) map[string]string {
 
 		// If field was not overridden by ToTable, add it to row map and headers map
 		if _, ok := r[name]; !ok {
-			r[name] = s.ToString(val.Field(j).Interface()) // fmt.Sprintf("%v", val.Field(j))
+			r[name] = c.ToString(val.Field(j).Interface()) // fmt.Sprintf("%v", val.Field(j))
 		}
 	}
 
@@ -135,17 +150,4 @@ func getNameOfField(f reflect.StructField) string {
 	}
 
 	return name
-}
-
-type dereferencable[T any] interface {
-	Kind() reflect.Kind
-	Elem() T
-}
-
-// dereference is used for reflect types to get the underlying type without pointers
-func dereference[T dereferencable[T]](d T) T {
-	for d.Kind() == reflect.Pointer {
-		d = d.Elem()
-	}
-	return d
 }

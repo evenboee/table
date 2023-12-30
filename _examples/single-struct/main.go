@@ -30,12 +30,10 @@ func main() {
 		table.WithRightAlignNumeric(false),
 	)
 
-	// Save opts for reuse
-	opts := []table.StringifyConfigOpt{
-		table.WithStringer(customSingleStructStringer),
-		table.WithTimeFormat("15:04:05 02-01-2006"),
-	}
+	// Create StringifyConfig for reuse
+	sc := table.NewStringifyConfig(customSingleStructStringer).
+		With(table.WithTimeFormat("15:04:05 02-01-2006"))
 
-	s := table.SingleStruct(user, opts...)
+	s := sc.ToString(user)
 	println(s)
 }

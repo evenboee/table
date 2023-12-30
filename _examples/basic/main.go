@@ -33,20 +33,20 @@ func main() {
 	}
 
 	// Basic
-	s := table.Struct(users)
+	s := table.String(users)
 	println(s)
 
 	// Different stringer
-	s = table.Struct(users, table.WithStringer(table.StringerUnicode))
+	s = table.StringWith(table.StringerUnicode, users)
 	println(s)
 
 	// Different time format
 	startT := time.Now()
-	s = table.Struct(users, table.WithTimeFormat("15:04:05 02-01-2006"))
+	s = table.String(users, table.WithTimeFormat("15:04:05 02-01-2006"))
 	elapsed := time.Since(startT)
-	println(s, elapsed)
+	println(s, elapsed.String())
 
 	// Spreadsheet mode (row number)
-	s = table.Struct(users, table.WithDefaultSpreadsheet) // or table.WithSpreadsheet("Row")
+	s = table.String(users, table.WithDefaultSpreadsheet) // or table.WithSpreadsheet("Row")
 	println(s)
 }

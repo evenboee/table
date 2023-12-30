@@ -4,20 +4,19 @@ import "github.com/evenboee/table/generalizer"
 
 type StringifyConfig struct {
 	*stringer
-	*generalizer.StringerConfig
+	*generalizer.Converter
 	Spreadsheet *string
 	Offset      int
 	Limit       int // if <= 0, no limit
 }
 
 var DefaultSpreadsheetHeader = "#"
-var DefaultGeneralizerStringerConfig = generalizer.DefaultStringerConfig
 
 func NewStringifyConfig(stringer *stringer) *StringifyConfig {
 	return &StringifyConfig{
-		stringer:       stringer,
-		StringerConfig: DefaultGeneralizerStringerConfig,
-		Spreadsheet:    nil,
+		stringer:    stringer,
+		Converter:   generalizer.GetDefaultConverter(),
+		Spreadsheet: nil,
 	}
 }
 
@@ -33,7 +32,7 @@ func (s *StringifyConfig) With(opts ...StringifyConfigOpt) *StringifyConfig {
 func (s *StringifyConfig) GetOpts() []StringifyConfigOpt {
 	return []StringifyConfigOpt{
 		WithStringer(s.stringer),
-		WithGeneralizer(s.StringerConfig),
+		WithConverter(s.Converter),
 		WithSpreadsheetHeader(s.Spreadsheet),
 		WithOffset(s.Offset),
 		WithLimit(s.Limit),
@@ -43,7 +42,7 @@ func (s *StringifyConfig) GetOpts() []StringifyConfigOpt {
 func WithStringifyConfig(s *StringifyConfig) StringifyConfigOpt {
 	return func(c *StringifyConfig) {
 		c.stringer = s.stringer
-		c.StringerConfig = s.StringerConfig
+		c.Converter = s.Converter
 		c.Spreadsheet = s.Spreadsheet
 		c.Offset = s.Offset
 		c.Limit = s.Limit
@@ -66,21 +65,21 @@ func WithSpreadsheet(s string) StringifyConfigOpt {
 	}
 }
 
-func WithGeneralizer(s *generalizer.StringerConfig) StringifyConfigOpt {
+func WithConverter(s *generalizer.Converter) StringifyConfigOpt {
 	return func(c *StringifyConfig) {
-		c.StringerConfig = s
+		c.Converter = s
 	}
 }
 
 func WithTimeFormat(format string) StringifyConfigOpt {
 	return func(c *StringifyConfig) {
-		c.StringerConfig.Time = generalizer.TimeStringer(format)
+		c.Converter.Time = generalizer.TimeFormatter(format)
 	}
 }
 
 func WithDecimalPrecision(precision uint16) StringifyConfigOpt {
 	return func(c *StringifyConfig) {
-		c.StringerConfig.Float = generalizer.FloatDecimalFormatter(int(precision))
+		c.Converter.Float = generalizer.FloatDecimalFormatter(int(precision))
 	}
 }
 

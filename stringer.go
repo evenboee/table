@@ -1,6 +1,7 @@
 package table
 
 import (
+	"github.com/evenboee/table/generalizer"
 	"strconv"
 	"strings"
 )
@@ -9,7 +10,10 @@ import (
 //   Could be achieved by a common struct for separating line that would include: left edge (<), separator (-), junction (+) and right edge (>)
 //   This would be for top, header and bottom lines
 
-func (s *StringifyConfig) Stringify(headers []string, data []map[string]string) string {
+func (s *StringifyConfig) Stringify(res generalizer.Result) string {
+	headers := res.Headers
+	data := res.Rows
+
 	if s.Spreadsheet != nil {
 		headers, data = insertSpreadsheetColumn(*s.Spreadsheet, headers, data)
 	}
