@@ -47,7 +47,6 @@ println(table.String(users))
 
 
 TODO:
-- [ ] Order additional columns (alphabetically?)
 - [ ] Table tag as option (specify other such as json, xml, yaml to use)
 - [ ] consider rework
   - StringifyConfig is a little clunky to understand

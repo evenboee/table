@@ -3,6 +3,7 @@ package generalizer
 import (
 	"errors"
 	"reflect"
+	"sort"
 )
 
 var StructTableTag = "table"
@@ -11,6 +12,11 @@ var StructTableTag = "table"
 type Tabular interface {
 	ToTable() map[string]string
 }
+
+//// Excluder is used to exclude fields from the struct
+//type Excluder interface {
+//	Exclude() []string
+//}
 
 var ErrTypeNotStruct = errors.New("type is not a struct")
 
@@ -23,7 +29,7 @@ func (c *Converter) Struct(data any) Result {
 		panic(ErrTypeNotStruct)
 	}
 
-	t = t.Elem() // Get the type of the struct
+	t = dereference(t.Elem()) // Get the type of the struct
 
 	// Intermediary map to keep track of headers and if they are numeric
 	h := make(map[string]struct{})
@@ -63,10 +69,29 @@ func (c *Converter) Struct(data any) Result {
 		}
 	}
 
-	// Add any remaining headers
-	for k := range h {
-		headers = append(headers, k)
+	// Add any remaining headers (sorted)
+	if l := len(h); l != 0 {
+		extraHeaders := make([]string, 0, l)
+		for k := range h {
+			extraHeaders = append(extraHeaders, k)
+		}
+		sort.Strings(extraHeaders)
+		headers = append(headers, extraHeaders...)
 	}
+
+	//if excluder, ok := reflect.New(t).Interface().(Excluder); ok {
+	//	excludedHeaders := excluder.Exclude()
+	//	if excludedHeaders != nil {
+	//		slices.DeleteFunc(headers, func(s string) bool {
+	//			for _, header := range excludedHeaders {
+	//				if s == header {
+	//					return true
+	//				}
+	//			}
+	//			return false
+	//		})
+	//	}
+	//}
 
 	return Result{
 		Headers: headers,
@@ -98,11 +123,19 @@ func (c *Converter) SingleStruct(data any) Result {
 		}
 	}
 
-	for k, v := range r {
-		fields = append(fields, map[string]string{
-			"Field": k,
-			"Value": v,
-		})
+	// Add any remaining fields (sorted)
+	if l := len(r); l != 0 {
+		extraFields := make([]string, 0, l)
+		for k := range r {
+			extraFields = append(extraFields, k)
+		}
+		sort.Strings(extraFields)
+		for _, k := range extraFields {
+			fields = append(fields, map[string]string{
+				"Field": k,
+				"Value": r[k],
+			})
+		}
 	}
 
 	return Result{
@@ -136,7 +169,7 @@ func (c *Converter) generalizeStruct(data any) map[string]string {
 
 		// If field was not overridden by ToTable, add it to row map and headers map
 		if _, ok := r[name]; !ok {
-			r[name] = c.ToString(val.Field(j).Interface()) // fmt.Sprintf("%v", val.Field(j))
+			r[name] = c.ToString(val.Field(j).Interface())
 		}
 	}
 
@@ -144,6 +177,10 @@ func (c *Converter) generalizeStruct(data any) map[string]string {
 }
 
 func getNameOfField(f reflect.StructField) string {
+	if !f.IsExported() { // Skip unexported fields
+		return "-"
+	}
+
 	name := f.Name
 	if tag := f.Tag.Get(StructTableTag); tag != "" {
 		name = tag
