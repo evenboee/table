@@ -20,6 +20,10 @@ func NewStringifyConfig(stringer *stringer) *StringifyConfig {
 	}
 }
 
+func DefaultStringifyConfig() *StringifyConfig {
+	return NewStringifyConfig(DefaultStringer)
+}
+
 type StringifyConfigOpt func(*StringifyConfig)
 
 func (s *StringifyConfig) With(opts ...StringifyConfigOpt) *StringifyConfig {

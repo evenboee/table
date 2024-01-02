@@ -8,7 +8,7 @@ func (s *StringifyConfig) ToString(data any) string {
 // String creates a StringifyConfig with the options (opts) provided and the default stringer
 // Calls ToString on the created StringifyConfig
 func String(data any, opts ...StringifyConfigOpt) string {
-	return NewStringifyConfig(DefaultStringer).With(opts...).ToString(data)
+	return DefaultStringifyConfig().With(opts...).ToString(data)
 }
 
 // StringWith creates a StringifyConfig with the options (opts) provided and the provided stringer

@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-// Future feature support different edges like: "╔═══╗" "╚═══╝")
-//   Could be achieved by a common struct for separating line that would include: left edge (<), separator (-), junction (+) and right edge (>)
-//   This would be for top, header and bottom lines
-
 func (s *StringifyConfig) Stringify(res generalizer.Result) string {
 	headers := res.Headers
 	data := res.Rows
@@ -27,7 +23,6 @@ func (s *StringifyConfig) Stringify(res generalizer.Result) string {
 	}
 
 	margin := strings.Repeat(" ", s.Margin)
-	// sep := margin + strings.Repeat(s.Sep, unicodeLength(s.Edge)) + margin
 	sep := margin + s.Sep + margin
 	leadingEdge := s.LeftEdge + margin
 	trailingEdge := margin + s.RightEdge

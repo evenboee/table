@@ -1,9 +1,12 @@
 package generalizer
 
 import (
+	"errors"
 	"reflect"
 	"strconv"
 )
+
+var ErrDataIsNotSlice = errors.New("data is not a slice")
 
 func (c *Converter) Array(data any) Result {
 	headers := []string{"N", "Value"}
@@ -11,7 +14,7 @@ func (c *Converter) Array(data any) Result {
 	rows := make([]map[string]string, 0)
 	v := dereference(reflect.ValueOf(data))
 	if v.Kind() != reflect.Slice {
-		panic("data is not a slice")
+		panic(ErrDataIsNotSlice)
 	}
 
 	for i := 0; i < v.Len(); i++ {

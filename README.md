@@ -52,3 +52,4 @@ TODO:
 - [ ] consider rework
   - StringifyConfig is a little clunky to understand
   - Generalizer Converter configuration when using table.String is excessively verbose
+- plan (and fix) undefined nil behavior

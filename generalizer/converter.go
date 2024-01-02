@@ -62,8 +62,17 @@ func (c *Converter) ToString(val any) string {
 
 	// Get actual value (no pointer)
 	v := reflect.ValueOf(val)
-	if v.Kind() == reflect.Pointer && v.IsNil() {
-		return c.Nil()
+	if v.Kind() == reflect.Pointer {
+		// If pointer: dig deeper
+		for v.Kind() == reflect.Pointer {
+			if v.IsNil() {
+				return c.Nil()
+			}
+
+			v = v.Elem()
+		}
+
+		val = v.Interface()
 	}
 
 	// Check type
