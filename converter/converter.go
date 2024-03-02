@@ -43,6 +43,7 @@ var DefaultFallback = func(v any) string {
 func Default() *Converter {
 	return &Converter{
 		Float:    FloatDecimalFormatter(2),
+		Time:     TimeFormatter(time.RFC3339),
 		Nil:      NilFormatter,
 		Fallback: DefaultFallback,
 	}

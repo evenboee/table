@@ -1,6 +1,9 @@
 package table
 
-import "github.com/evenboee/table/generalizer"
+import (
+	"github.com/evenboee/table/converter"
+	"github.com/evenboee/table/generalizer"
+)
 
 type Params struct {
 	Style             *TableStyle
@@ -135,6 +138,8 @@ func WithAutoFormatHeader() ParamsOption {
 	}
 }
 
+// Here is functions to avoid involving the generalizer package for basic use cases
+
 func Include(fields ...string) ParamsOption {
 	return func(s *Params) {
 		s.GeneralizerParams.Include = fields
@@ -144,5 +149,23 @@ func Include(fields ...string) ParamsOption {
 func Exclude(fields ...string) ParamsOption {
 	return func(s *Params) {
 		s.GeneralizerParams.Exclude = fields
+	}
+}
+
+func TimeFormat(format string) ParamsOption {
+	return func(s *Params) {
+		s.GeneralizerParams.Converter.Time = converter.TimeFormatter(format)
+	}
+}
+
+func DecimalPrecision(precision int) ParamsOption {
+	return func(s *Params) {
+		s.GeneralizerParams.Converter.Float = converter.FloatDecimalFormatter(precision)
+	}
+}
+
+func Bool(t string, f string) ParamsOption {
+	return func(s *Params) {
+		s.GeneralizerParams.Converter.Bool = converter.BoolFormatter(t, f)
 	}
 }
