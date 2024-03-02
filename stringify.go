@@ -8,11 +8,11 @@ import (
 
 // TODO: Account for left, right, and separators longer than 1 character e.g. "||" or ">>"
 
-func Generate(headers []string, rows [][]string, opts ...StringifyOption) Table {
+func Generate(headers []string, rows [][]string, opts ...ParamsOption) Table {
 	return New(opts...).Generate(headers, rows)
 }
 
-func (s *Stringify) Generate(headers []string, rows [][]string) Table {
+func (s *Params) Generate(headers []string, rows [][]string) Table {
 	validateTable(headers, rows)
 
 	if s.HeaderFormatter != nil {

@@ -2,8 +2,7 @@ package table
 
 import "github.com/evenboee/table/generalizer"
 
-// TODO: Rename to Stringifier
-type Stringify struct {
+type Params struct {
 	Style             *TableStyle
 	GeneralizerParams *generalizer.Params
 
@@ -37,8 +36,8 @@ func copy[T any](v *T) *T {
 	return vv
 }
 
-func Default() *Stringify {
-	return &Stringify{
+func Default() *Params {
+	return &Params{
 		Style:             DefaultStyle,
 		GeneralizerParams: GeneralizerParams,
 		OmitHeader:        OmitHeader,
@@ -49,7 +48,7 @@ func Default() *Stringify {
 	}
 }
 
-func New(opts ...StringifyOption) *Stringify {
+func New(opts ...ParamsOption) *Params {
 	s := Default()
 
 	for _, opt := range opts {
@@ -59,8 +58,8 @@ func New(opts ...StringifyOption) *Stringify {
 	return s
 }
 
-func (s *Stringify) Copy() *Stringify {
-	return &Stringify{
+func (s *Params) Copy() *Params {
+	return &Params{
 		Style:             s.Style.Copy(),
 		GeneralizerParams: s.GeneralizerParams.Copy(),
 		OmitHeader:        s.OmitHeader,
@@ -70,7 +69,7 @@ func (s *Stringify) Copy() *Stringify {
 	}
 }
 
-func (s *Stringify) With(opts ...StringifyOption) *Stringify {
+func (s *Params) With(opts ...ParamsOption) *Params {
 	ss := s.Copy()
 
 	for _, opt := range opts {
@@ -80,58 +79,58 @@ func (s *Stringify) With(opts ...StringifyOption) *Stringify {
 	return ss
 }
 
-type StringifyOption func(*Stringify)
+type ParamsOption func(*Params)
 
-func WithStyle(style *TableStyle) StringifyOption {
-	return func(s *Stringify) {
+func WithStyle(style *TableStyle) ParamsOption {
+	return func(s *Params) {
 		s.Style = style
 	}
 }
 
-func WithGeneralizer(params *generalizer.Params) StringifyOption {
-	return func(s *Stringify) {
+func WithGeneralizer(params *generalizer.Params) ParamsOption {
+	return func(s *Params) {
 		s.GeneralizerParams = params
 	}
 }
 
-func WithOmitHeader(omit bool) StringifyOption {
-	return func(s *Stringify) {
+func WithOmitHeader(omit bool) ParamsOption {
+	return func(s *Params) {
 		s.OmitHeader = omit
 	}
 }
 
-func WithOmitPadding(omit bool) StringifyOption {
-	return func(s *Stringify) {
+func WithOmitPadding(omit bool) ParamsOption {
+	return func(s *Params) {
 		s.OmitPadding = omit
 	}
 }
 
-func WithRightAlignNumeric(right bool) StringifyOption {
-	return func(s *Stringify) {
+func WithRightAlignNumeric(right bool) ParamsOption {
+	return func(s *Params) {
 		s.RightAlignNumeric = right
 	}
 }
 
-func WithSpreadsheet(header string) StringifyOption {
-	return func(s *Stringify) {
+func WithSpreadsheet(header string) ParamsOption {
+	return func(s *Params) {
 		s.Spreadsheet = &header
 	}
 }
 
-func WithHeaderAlignment(align alignment) StringifyOption {
-	return func(s *Stringify) {
+func WithHeaderAlignment(align alignment) ParamsOption {
+	return func(s *Params) {
 		s.HeaderAlignment = align
 	}
 }
 
-func WithHeaderFormatter(f func(string) string) StringifyOption {
-	return func(s *Stringify) {
+func WithHeaderFormatter(f func(string) string) ParamsOption {
+	return func(s *Params) {
 		s.HeaderFormatter = f
 	}
 }
 
-func WithAutoFormatHeader() StringifyOption {
-	return func(s *Stringify) {
+func WithAutoFormatHeader() ParamsOption {
+	return func(s *Params) {
 		s.HeaderFormatter = AutoFormatHeader
 	}
 }
