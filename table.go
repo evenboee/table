@@ -2,8 +2,6 @@ package table
 
 import (
 	"fmt"
-
-	"github.com/evenboee/table/generalizer"
 )
 
 type Table string
@@ -17,7 +15,7 @@ func (t Table) Print() {
 }
 
 func (s *Params) String(v any) Table {
-	return s.Generate(generalizer.Any(v))
+	return s.Generate(s.GeneralizerParams.Any(v))
 }
 
 func String(v any, opts ...ParamsOption) Table {

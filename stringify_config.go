@@ -134,3 +134,15 @@ func WithAutoFormatHeader() ParamsOption {
 		s.HeaderFormatter = AutoFormatHeader
 	}
 }
+
+func Include(fields ...string) ParamsOption {
+	return func(s *Params) {
+		s.GeneralizerParams.Include = fields
+	}
+}
+
+func Exclude(fields ...string) ParamsOption {
+	return func(s *Params) {
+		s.GeneralizerParams.Exclude = fields
+	}
+}
