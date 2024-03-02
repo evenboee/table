@@ -86,9 +86,9 @@ func (s *Params) Generate(headers []string, rows [][]string) Table {
 				sb.WriteString(s.Style.Separator)
 			}
 
-			align := Left
+			align := AlignLeft
 			if s.RightAlignNumeric && isNumeric(cell) {
-				align = Right
+				align = AlignRight
 			}
 
 			sb.WriteString(cellString(cell, colWidths[j], align, s.Style.Padding, s.OmitPadding))
@@ -140,18 +140,18 @@ func unicodeLength(s string) int {
 type alignment int
 
 const (
-	Left alignment = iota
-	Right
-	Center
+	AlignLeft alignment = iota
+	AlignRight
+	AlignCenter
 )
 
 func pad(s string, width int, align alignment) string {
 	switch align {
-	case Left:
+	case AlignLeft:
 		return s + strings.Repeat(" ", width-unicodeLength(s))
-	case Right:
+	case AlignRight:
 		return strings.Repeat(" ", width-unicodeLength(s)) + s
-	case Center:
+	case AlignCenter:
 		diff := width - unicodeLength(s)
 		left := diff / 2
 		right := diff - left

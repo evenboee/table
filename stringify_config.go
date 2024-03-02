@@ -24,7 +24,7 @@ var (
 	OmitPadding       bool      = false
 	RightAlignNumeric bool      = true
 	Spreadsheet       *string   = nil
-	HeaderAlignment   alignment = Center
+	HeaderAlignment   alignment = AlignCenter
 )
 
 func copy[T any](v *T) *T {
